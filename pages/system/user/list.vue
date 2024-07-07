@@ -31,41 +31,56 @@
 				<uni-table ref="table" :loading="loading" :emptyText="error.message || $t('common.empty')" border stripe
 					type="selection" @selection-change="selectionChange">
 					<uni-tr>
+
+						<!-- wang add -->
 						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'username')"
 							sortable @sort-change="sortChange($event, 'username')">用户名</uni-th>
-						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'nickname')"
-							sortable @sort-change="sortChange($event, 'nickname')">用户昵称</uni-th>
+						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'gender')"
+							sortable @sort-change="sortChange($event, 'gender')">性别</uni-th>
 						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'mobile')"
 							sortable @sort-change="sortChange($event, 'mobile')">手机号码</uni-th>
-						<uni-th align="center" filter-type="select" :filter-data="options.filterData.status_localdata"
-							@filter-change="filterChange($event, 'status')">用户状态</uni-th>
+
+						<!-- <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'role')"
+							sortable @sort-change="sortChange($event, 'role')">职位</uni-th>
+						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'rank')"
+							sortable @sort-change="sortChange($event, 'rank')">级别</uni-th> -->
+						<uni-th align="center" filter-type="search"
+							@filter-change="filterChange($event, 'employee_number')" sortable
+							@sort-change="sortChange($event, 'employee_number')">工时成本</uni-th>
+						<!-- <uni-th align="center" filter-type="select" :filter-data="options.filterData.status_localdata"
+							@filter-change="filterChange($event, 'status')">用户状态</uni-th> -->
 						<uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'email')"
 							sortable @sort-change="sortChange($event, 'email')">邮箱</uni-th>
-						<uni-th align="center">角色</uni-th>
-						<uni-th align="center" filter-type="select" :filter-data="tagsData"
+						<uni-th align="center">职位</uni-th>
+						<!-- <uni-th align="center" filter-type="select" :filter-data="tagsData"
 							@filter-change="filterChange($event, 'tags')">用户标签</uni-th>
 						<uni-th align="center">可登录应用</uni-th>
 						<uni-th align="center" filter-type="timestamp"
 							@filter-change="filterChange($event, 'last_login_date')" sortable
-							@sort-change="sortChange($event, 'last_login_date')">最后登录时间</uni-th>
+							@sort-change="sortChange($event, 'last_login_date')">最后登录时间</uni-th> -->
 						<uni-th align="center">操作</uni-th>
 					</uni-tr>
 					<uni-tr v-for="(item,index) in data" :key="index">
 						<uni-td align="center">{{item.username}}</uni-td>
-						<uni-td align="center">{{item.nickname}}</uni-td>
+						<uni-td align="center">{{item.gender}}</uni-td>
 						<uni-td align="center">{{item.mobile}}</uni-td>
-						<uni-td align="center">{{options.status_valuetotext[item.status]}}</uni-td>
+
+						<!-- <uni-td align="center">{{item.role}}</uni-td>
+						<uni-td align="center">{{item.rank}}</uni-td> -->
+						<uni-td align="center">{{item.employee_number}}</uni-td>
+
+						<!-- <uni-td align="center">{{options.status_valuetotext[item.status]}}</uni-td> -->
 						<uni-td align="center">
 							<uni-link :href="'mailto:' + item.email" :text="item.email"></uni-link>
 						</uni-td>
-						<uni-td align="center"> {{ item.role }}</uni-td>
-						<uni-td align="center">
-							<block v-for="(tag,tagIndex) in item.tags" :key="tagIndex">
-								<uni-tag type="primary" inverted size="small" :text="tag" v-if="item.tags"
+						<uni-td align="center"> {{ item.position }}</uni-td>
+						<!-- <uni-td align="center">
+							<block v-for="(tag,tagIndex) in item.position" :key="tagIndex">
+								<uni-tag type="primary" inverted size="small" :text="tag" v-if="item.position"
 									style="margin: 0 5px;"></uni-tag>
 							</block>
-						</uni-td>
-						<uni-td align="center">
+						</uni-td> -->
+						<!-- <uni-td align="center">
 							<uni-link v-if="item.dcloud_appid === undefined" :href="noAppidWhatShouldIDoLink">
 								未绑定可登录应用<view class="uni-icons-help"></view>
 							</uni-link>
@@ -73,10 +88,10 @@
 						</uni-td>
 						<uni-td align="center">
 							<uni-dateformat :threshold="[0, 0]" :date="item.last_login_date"></uni-dateformat>
-						</uni-td>
+						</uni-td> -->
 						<uni-td align="center">
 							<view class="uni-group">
-								<button @click="navigateTo('./edit?id=' + item._id, false)" class="uni-button"
+								<button @click="navigateTo('./edit_admin?id=' + item._id, false)" class="uni-button"
 									size="mini" type="primary">{{ $t('common.button.edit') }}</button>
 								<button @click="confirmDelete(item._id)" class="uni-button" size="mini"
 									type="warn">{{ $t('common.button.delete') }}</button>
@@ -119,6 +134,7 @@
 	import UniForms from "@/uni_modules/uni-forms/components/uni-forms/uni-forms";
 	import UniFormsItem from "@/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item";
 	import UniEasyinput from "@/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput";
+	import * as uniIdPagesStore from '@/uni_modules/uni-id-pages/common/store'
 
 	const db = uniCloud.database()
 	// 表查询配置
@@ -137,8 +153,8 @@
 		data() {
 			return {
 				collectionList: [db.collection('uni-id-users').field(
-					'ali_openid,apple_openid,avatar,avatar_file,comment,dcloud_appid,department_id,email,email_confirmed,gender,invite_time,inviter_uid,last_login_date,last_login_ip,mobile,mobile_confirmed,my_invite_code,nickname,role,score,status,username,wx_unionid,qq_unionid,tags'
-					).getTemp(), db.collection('uni-id-roles').field('role_id, role_name').getTemp()],
+					'ali_openid,apple_openid,avatar,avatar_file,comment,dcloud_appid,department_id,position,email,email_confirmed,gender,invite_time,inviter_uid,last_login_date,last_login_ip,mobile,mobile_confirmed,my_invite_code,nickname,role,score,status,username,wx_unionid,qq_unionid,tags,permision,work_cost,rank,employee_number'
+				).getTemp(), db.collection('uni-id-roles').field('role_id, role_name').getTemp()],
 				query: '',
 				where: '',
 				orderby: dbOrderBy,
@@ -277,6 +293,11 @@
 			closeTagsPopup() {
 				this.$refs.tagsPopup.close()
 			},
+			// 获取当前登录用户信息
+			getUserInfo() {
+				let userInfo = uniIdPagesStore.store.userInfo
+				console.log("userInfo: ", userInfo)
+			},
 			getWhere() {
 				const query = this.query.trim()
 				if (!query) {
@@ -326,8 +347,22 @@
 					current: e.current
 				})
 			},
+			navigateToEdit(id, clear) {
+				// clear 表示刷新列表时是否清除页码，true 表示刷新并回到列表第 1 页，默认为 true
+
+				uni.navigateTo({
+					url,
+					events: {
+						refreshData: () => {
+							this.loadTags()
+							this.loadData(clear)
+						}
+					}
+				})
+			},
 			navigateTo(url, clear) {
 				// clear 表示刷新列表时是否清除页码，true 表示刷新并回到列表第 1 页，默认为 true
+				this.getUserInfo()
 				uni.navigateTo({
 					url,
 					events: {
