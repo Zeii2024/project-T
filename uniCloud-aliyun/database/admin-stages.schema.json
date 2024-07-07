@@ -1,0 +1,77 @@
+{
+	"bsonType": "object",
+	"required": [
+		"project_id",
+		"name"
+	],
+	"permission": {
+		"read": "'READ_OPENDB_APP_LIST' in auth.permission",
+		"create": "'CREATE_OPENDB_APP_LIST' in auth.permission",
+		"update": "'UPDATE_OPENDB_APP_LIST' in auth.permission",
+		"delete": "'DELETE_OPENDB_APP_LIST' in auth.permission"
+	},
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"stage_id": {
+			"bsonType": "string",
+			"description": "阶段id",
+			"label": "StageId",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					":disabled": true
+				}
+			}
+		},
+		"project_id": {
+			"bsonType": "string",
+			"description": "对应的项目id",
+			"label": "ProjectId",
+			"foreignKey": "admin-projects.project_id", // 外键
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					":disabled": true
+				}
+			}
+		},
+		"name": {
+			"bsonType": "string",
+			"description": "阶段名称"
+		},
+		"state": {
+			"bsonType": "int",
+			"description": "阶段状态, 1:未开始,2:进行中,3:已完成,4:延期中,5:已中止"
+		},
+		"owner": {
+			"bsonType": "string",
+			"description": "负责人"
+		},
+		"members": {
+			"bsonType": "string",
+			"description": "阶段成员"
+		},
+		"sort": {
+			"bsonType": "int",
+			"description": "阶段排序"
+		},
+		"permision": {
+			"bsonType": "array",
+			"description": "授权等级"
+		},
+		"start_time": {
+			"bsonType": "timestamp",
+			"description": "开始时间"
+		},
+		"end_time": {
+			"bsonType": "timestamp",
+			"description": "结束时间"
+		},
+		"create_time": {
+			"bsonType": "timestamp",
+			"description": "创建时间"
+		}
+	}
+}

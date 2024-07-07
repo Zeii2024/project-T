@@ -1,0 +1,111 @@
+{
+	"bsonType": "object",
+	"required": [
+		"project_id",
+		"name"
+	],
+	"permission": {
+		"read": "'READ_OPENDB_APP_LIST' in auth.permission",
+		"create": "'CREATE_OPENDB_APP_LIST' in auth.permission",
+		"update": "'UPDATE_OPENDB_APP_LIST' in auth.permission",
+		"delete": "'DELETE_OPENDB_APP_LIST' in auth.permission"
+	},
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"project_id": {
+			"bsonType": "string",
+			"description": "项目id",
+			"label": "ProjectId",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					":disabled": true
+				}
+			}
+		},
+		"name": {
+			"bsonType": "string",
+			"description": "项目名称",
+			"label": "项目名称",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					":disabled": true
+				}
+			}
+		},
+		"description": {
+			"bsonType": "string",
+			"description": "项目描述",
+			"label": "项目描述",
+			"componentForEdit": {
+				"name": "textarea"
+			},
+			"componentForShow": {
+				"name": "textarea",
+				"props": {
+					":disabled": true
+				}
+			}
+		},
+		"project_type": {
+			"bsonType": "int",
+			"description": "项目类型，1：个人，2：企业"
+		},
+		"owner_id": {
+			"bsonType": "array",
+			"description": "项目负责人id，可以有多个，user_id or enterprise_id"
+		},
+		"members": {
+			"bsonType": "array",
+			"description": "项目成员ID列表"
+		},
+		"stages": {
+			"bsonType": "array",
+			"description": "项目所有的阶段Id",
+			"enum": {
+				"collection": "admin-stages",
+				"field": "stage_id as value"
+			},
+			"foreignKey": "admin-stages.stage_id"
+		},
+
+		"state": {
+			"bsonType": "int",
+			"description": "项目所处状态，1:未开始，2：进行中，3：已结束，4：延期中，5：已中止"
+		},
+		"cost": {
+			"bsonType": "int",
+			"description": "当前成本"
+		},
+		"total_cost": {
+			"bsonType": "int",
+			"description": "总成本"
+		},
+		"other_cost": {
+			"bsonType": "string",
+			"description": "其他成本"
+		},
+		"start_time": {
+			"bsonType": "timestamp",
+			"description": "项目开始时间"
+		},
+		"end_time": {
+			"bsonType": "timestamp",
+			"description": "项目结束时间"
+		},
+		"create_date": {
+			"bsonType": "timestamp",
+			"label": "创建时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForEdit": {
+				"name": "uni-dateformat"
+			}
+		}
+	},
+	"version": "0.0.1"
+}

@@ -1,0 +1,31 @@
+[{
+		"IndexName": "project_id",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [{
+				"Name": "project_id",
+				"Direction": "1"
+			}],
+			"MgoIsUnique": true
+		}
+	},
+	{
+		"IndexName": "name",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [{
+				"Name": "name",
+				"Direction": "1"
+			}],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "owner_id",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [{
+				"Name": "owner_id",
+				"Direction": "1"
+			}],
+			"MgoIsUnique": false
+		}
+	}
+]
