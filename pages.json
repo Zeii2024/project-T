@@ -245,9 +245,9 @@
 					}
 				},
 				{
-					"path": "user/edit",
+					"path": "user/edit_owner",
 					"style": {
-						"navigationBarTitleText": "修改用户",
+						"navigationBarTitleText": "修改用户自身信息",
 						"navigationStyle": "default"
 					}
 				},
@@ -255,6 +255,13 @@
 					"path": "user/edit_admin",
 					"style": {
 						"navigationBarTitleText": "修改用户",
+						"navigationStyle": "default"
+					}
+				},
+				{
+					"path": "user/list_owner",
+					"style": {
+						"navigationBarTitleText": "展示用户自身信息",
 						"navigationStyle": "default"
 					}
 				},
@@ -319,6 +326,13 @@
 					"style": {
 						"navigationBarTitleText": "新建项目",
 						"navigationStyle": "default"
+					}
+				},
+				{
+					"path": "owner_list/owner_list",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false
 					}
 				}
 			]

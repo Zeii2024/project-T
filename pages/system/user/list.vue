@@ -295,8 +295,8 @@
 			},
 			// 获取当前登录用户信息
 			getUserInfo() {
-				let userInfo = uniIdPagesStore.store.userInfo
-				console.log("userInfo: ", userInfo)
+				return uniIdPagesStore.store.userInfo
+				// console.log("userInfo: ", userInfo)
 			},
 			getWhere() {
 				const query = this.query.trim()
@@ -362,7 +362,7 @@
 			},
 			navigateTo(url, clear) {
 				// clear 表示刷新列表时是否清除页码，true 表示刷新并回到列表第 1 页，默认为 true
-				this.getUserInfo()
+
 				uni.navigateTo({
 					url,
 					events: {
