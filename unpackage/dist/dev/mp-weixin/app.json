@@ -22,7 +22,22 @@
     "uni_modules/uni-id-pages/pages/retrieve/retrieve-by-email",
     "uni_modules/uni-id-pages/pages/common/webview/webview",
     "uni_modules/uni-id-pages/pages/userinfo/set-pwd/set-pwd",
-    "uni_modules/uni-id-pages/pages/userinfo/realname-verify/realname-verify"
+    "uni_modules/uni-id-pages/pages/userinfo/realname-verify/realname-verify",
+    "pages/admin-projects/add",
+    "pages/admin-projects/edit",
+    "pages/admin-projects/list",
+    "pages/admin-projects/detail",
+    "pages/test/test",
+    "pages/admin-stages/add",
+    "pages/admin-stages/edit",
+    "pages/admin-stages/list",
+    "pages/admin-stages/detail",
+    "pages/admin-stages/popupEdit",
+    "pages/test/dialogDemo",
+    "pages/test/dialogComponent",
+    "pages/test/inputDemo/inputDemo",
+    "pages/test/inputDemo/AssociationInputDemo",
+    "pages/admin-projects/add-elui"
   ],
   "subPackages": [
     {
@@ -38,7 +53,9 @@
         "role/edit",
         "role/list",
         "user/add",
-        "user/edit",
+        "user/edit_owner",
+        "user/edit_admin",
+        "user/list_owner",
         "user/list",
         "app/add",
         "app/list",
@@ -46,7 +63,10 @@
         "tag/add",
         "tag/edit",
         "tag/list",
-        "safety/list"
+        "safety/list",
+        "project/list",
+        "project/add",
+        "dialogComponent"
       ]
     },
     {

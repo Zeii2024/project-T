@@ -10,12 +10,12 @@
 	},
 	"repository": "https://github.com/dcloudio/uni-admin.git",
 	"keywords": [
-        "admin",
-        "uniCloud",
-        "管理后台",
-        "云后台",
-        "uni-admin"
-    ],
+		"admin",
+		"uniCloud",
+		"管理后台",
+		"云后台",
+		"uni-admin"
+	],
 	"engines": {
 		"HBuilderX": "^3.6.0"
 	},
@@ -91,5 +91,9 @@
 				}
 			}
 		}
+	},
+	"dependencies": {
+		"element-ui": "^2.15.14",
+		"view-ui-plus": "^1.3.17"
 	}
 }

@@ -14,6 +14,7 @@
 				<!-- 新增 ./add 当前目录的add文件  ../表示上一层目录  ../../表示上上层目录-->
 				<button class="uni-button" type="primary" size="mini"
 					@click="navigateTo('../../admin-projects/add')">{{$t('common.button.add')}}</button>
+				<!-- 批量删除 -->
 				<button class="uni-button" type="warn" size="mini" :disabled="!selectedIndexs.length"
 					@click="delTable">{{$t('common.button.batchDelete')}}</button>
 				<!-- #ifdef H5 -->
@@ -133,7 +134,7 @@
 								<uni-th align="center" filter-type="timestamp">创建时间</uni-th>
 								<uni-th align="center" :width="buttonThWidth">操作</uni-th>
 							</uni-tr>
-							<uni-tr v-for="item in stages">
+							<uni-tr v-for="(item,index) in stages" :key="index">
 								<uni-td align="center">{{item.stage_id}}</uni-td>
 								<uni-td align="center">{{item.name}}</uni-td>
 								<uni-td align="left">{{item.state}}</uni-td>
@@ -142,20 +143,26 @@
 								<uni-td align="center">{{item.creat_time}}</uni-td>
 								<uni-td align="center">
 									<view class="uni-group">
-										<button @click="publish(item._id)" class="uni-button" size="mini"
-											type="primary">{{$t('common.button.publish')}}</button>
-										<button
-											@click="navigateTo('/uni_modules/uni-upgrade-center/pages/version/list?appid='+item.appid, false)"
-											class="uni-button" size="mini"
-											type="primary">{{$t('common.button.version')}}</button>
-										<button @click="navigateTo('./add?id='+item.appid, false)" class="uni-button"
-											size="mini" type="primary">{{$t('common.button.edit')}}</button>
+										<!-- 阶段的修改和删除 弹窗表单形式 -->
+										<button @click="editRow(item)" class="uni-button" size="mini"
+											type="primary">{{$t('common.button.edit')}}</button>
 										<button @click="confirmDelete(item._id)" class="uni-button" size="mini"
 											type="warn">{{$t('common.button.delete')}}</button>
 									</view>
 								</uni-td>
 							</uni-tr>
+
+							<uni-tr>
+								<button class="uni-button" @click="navigateTo('../../admin-stages/add')">新增阶段</button>
+							</uni-tr>
+
 						</uni-table>
+
+						<!--弹框组件开始-----------------------start-->
+						<dialog-component v-if="showDialog" ref="dialogComponent" :dialog-title="dialogTitle"
+							:item-info="stageItem" @closeDialog="closeDialog()"></dialog-component>
+						<!--弹框组件开始-----------------------end-->
+
 						<!-- 底部 -->
 						<view class="uni-pagination-box">
 							<uni-pagination show-icon show-page-size :page-size="pagination.size"
@@ -175,6 +182,8 @@
 
 
 <script>
+	// import DialogComponent from "../dialogComponent";
+	import DialogComponent from "../../admin-stages/edit.vue";
 	import {
 		enumConverter,
 		filterToWhere
@@ -197,6 +206,10 @@
 	}
 
 	export default {
+		name: "DialogDemo",
+		components: {
+			DialogComponent
+		},
 		data() {
 			return {
 				collectionList: [db.collection('admin-projects').field(
@@ -237,24 +250,28 @@
 					cost: 0,
 					total_cost: 0,
 				},
-				// stage: {
-				// 	stage_id: 0,
-				// 	project_id: 0,
-				// 	name: "",
-				// 	state: 0,
-				// 	owner: "",
-				// 	members: "",
-				// 	start_time: 0,
-				// 	end_time: 0,
-				// 	sort: 0,
-				// 	creat_time: 0,
-				// },
 				stages: [],
+
+				stageItem: {
+					_id: 0,
+					stage_id: 0,
+					project_id: 0,
+					name: "",
+					state: 0,
+					owner: "",
+					members: "",
+					start_time: 0,
+					end_time: 0,
+					sort: 0,
+					creat_time: 0,
+				},
+				dialogTitle: "添加阶段信息",
+				showDialog: false,
 
 				exportExcelData: [],
 				addAppidLoading: true,
 				descriptionThWidth: 380,
-				buttonThWidth: 400
+				buttonThWidth: 200
 			}
 		},
 		onLoad() {
@@ -267,6 +284,30 @@
 			...mapState('app', ['appName', 'appid'])
 		},
 		methods: {
+			// 关闭操作
+			closeDialog(flag) {
+				if (flag) {
+					// 重新刷新表格内容
+					// this.fetchData();
+					const that = this;
+					that.tableLoading = true;
+					setTimeout(() => {
+						that.tableLoading = false;
+					}, 1500);
+				}
+				this.showDialog = false;
+			},
+			editRow(row) {
+				console.log("#####################row##########################")
+
+				this.stageItem = row;
+				console.log("stageItem:", this.stageItem)
+				this.dialogTitle = "编辑阶段信息";
+				this.showDialog = true;
+				this.$nextTick(() => {
+					this.$refs["dialogComponent"].showDialog = true;
+				});
+			},
 			pageSizeChange(pageSize) {
 				this.options.pageSize = pageSize
 				this.options.pageCurrent = 1
@@ -434,4 +475,14 @@
 </script>
 
 <style>
+	.button {
+		display: table-cell;
+		padding: 8px 10px;
+		font-size: 14px;
+		border-bottom: 1px $border-color solid;
+		font-weight: 400;
+		color: #606266;
+		line-height: 23px;
+		box-sizing: border-box;
+	}
 </style>
