@@ -140,6 +140,7 @@ exports.default = void 0;
 var _default2 = {
   name: 'tagsInput',
   data: function data() {
+    console.log("tags====", this.tags);
     return {
       // 输入框
       currentval: '',

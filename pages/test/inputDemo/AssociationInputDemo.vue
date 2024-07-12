@@ -6,6 +6,8 @@
 		<div v-show="isshow">
 			<p v-for="item in selectCitys">{{item}}</p>
 		</div>
+		<button class="uni-button" type="primary" size="mini" @click="navigateTo('./popDiaglog.vue')">
+			{{$t('common.button.add')}} </button>
 	</div>
 </template>
 <script>

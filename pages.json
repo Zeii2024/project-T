@@ -175,86 +175,85 @@
 			}
 		},
 		{
-			"path" : "pages/test/test",
+			"path": "pages/test/test",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/admin-stages/add",
+			"style": {
+				"navigationBarTitleText": "新增"
+			}
+		}, {
+			"path": "pages/admin-stages/edit",
+			"style": {
+				"navigationBarTitleText": "编辑"
+			}
+		}, {
+			"path": "pages/admin-stages/list",
+			"style": {
+				"navigationBarTitleText": "列表"
+			}
+		}, {
+			"path": "pages/admin-stages/detail",
+			"style": {
+				"navigationBarTitleText": "详情"
+			}
+		},
+		{
+			"path": "pages/admin-stages/popupEdit",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/test/dialogDemo",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+
+		{
+			"path": "pages/test/dialogComponent",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/test/inputDemo/inputDemo",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+
+		{
+			"path": "pages/test/inputDemo/AssociationInputDemo",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/admin-projects/add-elui",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path" : "pages/test/inputDemo/popDiaglog",
 			"style" : 
 			{
 				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false
 			}
 		}
-	,{
-    "path": "pages/admin-stages/add",
-    "style": {
-        "navigationBarTitleText": "新增"
-    }
-}
-,{
-    "path": "pages/admin-stages/edit",
-    "style": {
-        "navigationBarTitleText": "编辑"
-    }
-}
-,{
-    "path": "pages/admin-stages/list",
-    "style": {
-        "navigationBarTitleText": "列表"
-    }
-}
-,{
-    "path": "pages/admin-stages/detail",
-    "style": {
-        "navigationBarTitleText": "详情"
-    }
-},
-{
-	"path" : "pages/admin-stages/popupEdit",
-	"style" : 
-	{
-		"navigationBarTitleText" : "",
-		"enablePullDownRefresh" : false
-	}
-},
-{
-	"path" : "pages/test/dialogDemo",
-	"style" : 
-	{
-		"navigationBarTitleText" : "",
-		"enablePullDownRefresh" : false
-	}
-},
-{
-	"path" : "pages/test/dialogComponent",
-	"style" : 
-	{
-		"navigationBarTitleText" : "",
-		"enablePullDownRefresh" : false
-	}
-},
-{
-	"path" : "pages/test/inputDemo/inputDemo",
-	"style" : 
-	{
-		"navigationBarTitleText" : "",
-		"enablePullDownRefresh" : false
-	}
-},
-{
-	"path" : "pages/test/inputDemo/AssociationInputDemo",
-	"style" : 
-	{
-		"navigationBarTitleText" : "",
-		"enablePullDownRefresh" : false
-	}
-},
-{
-	"path" : "pages/admin-projects/add-elui",
-	"style" : 
-	{
-		"navigationBarTitleText" : "",
-		"enablePullDownRefresh" : false
-	}
-}
-],
+	],
 	"subPackages": [{
 			"root": "pages/system",
 			"pages": [{
@@ -409,11 +408,10 @@
 					}
 				},
 				{
-					"path" : "dialogComponent",
-					"style" : 
-					{
-						"navigationBarTitleText" : "",
-						"enablePullDownRefresh" : false
+					"path": "dialogComponent",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false
 					}
 				}
 

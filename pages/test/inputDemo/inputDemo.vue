@@ -10,6 +10,9 @@
 			</el-form-item>
 		</el-form>
 
+		<button class="uni-button" type="primary" size="mini" @click="navigateTo('popDiaglog')">
+			{{$t('common.button.add')}} </button>
+
 	</view>
 </template>
 
@@ -28,6 +31,19 @@
 					}
 				],
 				form: {}
+			}
+		},
+		methods: {
+			navigateTo(url, clear) {
+				// clear 表示刷新列表时是否清除页码，true 表示刷新并回到列表第 1 页，默认为 true
+				uni.navigateTo({
+					url,
+					events: {
+						refreshData: () => {
+							this.loadData(clear)
+						}
+					}
+				})
 			}
 		}
 	}

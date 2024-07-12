@@ -19,6 +19,7 @@
 	export default {
 		name: 'tagsInput',
 		data() {
+			console.log("tags====", this.tags)
 			return {
 				// 输入框
 				currentval: '',
