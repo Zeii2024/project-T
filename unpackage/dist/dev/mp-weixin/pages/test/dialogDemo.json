@@ -2,6 +2,7 @@
   "navigationBarTitleText": "",
   "enablePullDownRefresh": false,
   "usingComponents": {
+    "tags-input": "/components/tags-input/tags-input",
     "dialog-component": "/pages/test/dialogComponent"
   }
 }

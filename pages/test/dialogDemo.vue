@@ -34,6 +34,7 @@
 				</template>
 			</el-table-column>
 		</el-table>
+		<tags-input @update="inputUpdate">在这里输入</tags-input>
 
 		<!--弹框组件开始-----------------------start-->
 		<dialog-component v-if="showDialog" ref="dialogComponent" :dialog-title="dialogTitle" :item-info="tableItem"
@@ -51,6 +52,7 @@
 		},
 		data() {
 			return {
+				// userData: [db.collection('uni-id-users').field('username').getTemp()],
 				tableLoading: false,
 				showDialog: false,
 				dialogTitle: "添加人员",
@@ -70,6 +72,9 @@
 			this.fetchData();
 		},
 		methods: {
+			inputUpdate(tags) {
+				console.log("tags: ", tags)
+			},
 			// 获取表格数据
 			fetchData() {
 				const that = this;
