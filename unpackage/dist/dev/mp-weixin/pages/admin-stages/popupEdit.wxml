@@ -1,1 +1,0 @@
-<view><el-dialog vue-id="5a55b173-1" title="弹窗" visible="{{detailVisible}}" width="35%" data-event-opts="{{[['^updateVisible',[['__set_sync',['$0','detailVisible','$event'],['']]]]]}}" bind:updateVisible="__e" bind:__l="__l" vue-slots="{{['default']}}">弹窗内容</el-dialog></view>
