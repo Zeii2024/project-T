@@ -15,7 +15,8 @@
 					v-model="formData.state"></uni-easyinput>
 			</uni-forms-item>
 			<uni-forms-item name="owner" label="负责人">
-				<uni-easyinput placeholder="负责人" v-model="formData.owner"></uni-easyinput>
+				<multags-input class="uni-easyinput" placeholder="负责人">多标签输入</multags-input>
+				<!-- <uni-easyinput placeholder="负责人" v-model="formData.owner"></uni-easyinput> -->
 			</uni-forms-item>
 			<uni-forms-item name="members" label="阶段成员">
 				<uni-easyinput placeholder="阶段成员" v-model="formData.members"></uni-easyinput>

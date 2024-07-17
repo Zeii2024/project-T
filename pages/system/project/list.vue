@@ -1,5 +1,4 @@
 <template>
-
 	<view class="fix-top-window">
 		<view class="uni-header">
 			<uni-stat-breadcrumb class="uni-stat-breadcrumb-on-phone" />
@@ -40,6 +39,7 @@
 						<uni-list height="auto">
 							<uni-list-item v-for="item in data" :key="item.id" :title="item.name"
 								@click="selectProject(item)" link>
+
 							</uni-list-item>
 						</uni-list>
 					</view>
@@ -158,9 +158,13 @@
 
 						</uni-table>
 
+
 						<!--弹框组件开始-----------------------start-->
-						<dialog-component v-if="showDialog" ref="dialogComponent" :dialog-title="dialogTitle"
-							:item-info="stageItem" @closeDialog="closeDialog()"></dialog-component>
+						<uni-popup ref="editDialog" type="dialog">
+							<edit-stage :test-info="testInfo" :itemInfo="stageItem">编辑阶段组件</edit-stage>
+						</uni-popup>
+						<!-- <dialog-component v-if="showDialog" ref="dialogComponent" :dialog-title="dialogTitle"
+							:item-info="stageItem" @closeDialog="closeDialog()"></dialog-component> -->
 						<!--弹框组件开始-----------------------end-->
 
 						<!-- 底部 -->
@@ -182,8 +186,7 @@
 
 
 <script>
-	// import DialogComponent from "../dialogComponent";
-	import DialogComponent from "../../admin-stages/edit.vue";
+	// import DialogComponent from "../../admin-stages/edit.vue";
 	import {
 		enumConverter,
 		filterToWhere
@@ -206,15 +209,15 @@
 	}
 
 	export default {
-		name: "DialogDemo",
-		components: {
-			DialogComponent
-		},
+		// name: "DialogDemo",
+		// components: {
+		// 	DialogComponent
+		// },
 		data() {
 			return {
 				collectionList: [db.collection('admin-projects').field(
 						'project_id,name,description,create_date,cost, state, stages, total_cost, owner_id, members')
-					.getTemp(), db.collection('admin-stages').field('_id, name,owner').getTemp()
+					.getTemp(), db.collection('admin-stages').field('_id,stage_id, name, owner').getTemp()
 				],
 				query: '',
 				where: '',
@@ -253,20 +256,22 @@
 				stages: [],
 
 				stageItem: {
-					_id: 0,
-					stage_id: 0,
-					project_id: 0,
-					name: "",
-					state: 0,
-					owner: "",
-					members: "",
-					start_time: 0,
-					end_time: 0,
-					sort: 0,
-					creat_time: 0,
+					"_id": "",
+					"stage_id": "",
+					"project_id": "",
+					"name": "",
+					"state": null,
+					"owner": "",
+					"members": "",
+					"sort": null,
+					"permision": [],
+					"start_time": null,
+					"end_time": null,
+					"create_time": null
 				},
-				dialogTitle: "添加阶段信息",
-				showDialog: false,
+				// dialogTitle: "添加阶段信息",
+				// showDialog: false,
+				testInfo: "测试通信",
 
 				exportExcelData: [],
 				addAppidLoading: true,
@@ -285,28 +290,28 @@
 		},
 		methods: {
 			// 关闭操作
-			closeDialog(flag) {
-				if (flag) {
-					// 重新刷新表格内容
-					// this.fetchData();
-					const that = this;
-					that.tableLoading = true;
-					setTimeout(() => {
-						that.tableLoading = false;
-					}, 1500);
-				}
-				this.showDialog = false;
-			},
+			// closeDialog(flag) {
+			// 	if (flag) {
+			// 		// 重新刷新表格内容
+			// 		// this.fetchData();
+			// 		const that = this;
+			// 		that.tableLoading = true;
+			// 		setTimeout(() => {
+			// 			that.tableLoading = false;
+			// 		}, 1500);
+			// 	}
+			// 	this.showDialog = false;
+			// },
 			editRow(row) {
-				console.log("#####################row##########################")
-
+				console.log("#####################editDialog#######row##########################")
 				this.stageItem = row;
-				console.log("stageItem:", this.stageItem)
-				this.dialogTitle = "编辑阶段信息";
-				this.showDialog = true;
-				this.$nextTick(() => {
-					this.$refs["dialogComponent"].showDialog = true;
-				});
+				console.log("stageItem:", JSON.stringify(this.stageItem))
+				this.$refs.editDialog.open()
+				// this.dialogTitle = "编辑阶段信息";
+				// this.showDialog = true;
+				// this.$nextTick(() => {
+				// 	this.$refs["dialogComponent"].showDialog = true;
+				// });
 			},
 			pageSizeChange(pageSize) {
 				this.options.pageSize = pageSize
@@ -324,9 +329,10 @@
 					//console.log(JSON.stringify(e.name)) // e为一个阶段表的内容
 					// st.push(e.name)  //ToDo
 				}
-				console.log(JSON.stringify(item.satges))
-				console.log(JSON.stringify(item.stages))
-				console.log("##################################################################")
+				// console.log("list.vue###########item: ", JSON.stringify(item))
+				// console.log("list.vue###########item.satges: ", JSON.stringify(item.satges))
+				console.log("list.vue###########item.stages: ", JSON.stringify(item.stages))
+				// console.log("##################################################################")
 				this.project = {
 					name: item.name,
 					owner: item.owner_id,

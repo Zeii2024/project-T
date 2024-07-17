@@ -102,7 +102,7 @@ var components
 try {
   components = {
     tagsInput: function () {
-      return __webpack_require__.e(/*! import() | components/tags-input/tags-input */ "components/tags-input/tags-input").then(__webpack_require__.bind(null, /*! @/components/tags-input/tags-input.vue */ 1532))
+      return __webpack_require__.e(/*! import() | components/tags-input/tags-input */ "components/tags-input/tags-input").then(__webpack_require__.bind(null, /*! @/components/tags-input/tags-input.vue */ 1168))
     },
   }
 } catch (e) {
