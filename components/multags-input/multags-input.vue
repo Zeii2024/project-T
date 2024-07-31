@@ -1,43 +1,89 @@
 <template>
-	<div @click="handleClick">
-		<!-- <div class="muli-tags" @click="handleClick"> -->
-		<span v-for="(tag, index) in tags" ref="tag" :key="`${index}-${tag}`" :data-tag-index="index" class="tag">
-			<i class="label">{{ tag }}</i>
-		</span>
-		<!-- :size="current.length || 1" -->
-		<input ref="input" v-model="current" type="text" class="input" @keyup.enter="add" @keydown.delete="del"
-			@keydown.left="preToMoveLeft" @keydown.right="preToMoveRight" @blur="add" @click.stop
-			@keydown.up="selectItem($event, 'before')" @keydown.down="selectItem($event, 'after')">
-		<div class="tip" @mouseout="selectedItem = null">
-			<div v-for="(item, i) in relativeTagOpts" :key="i" class="tip-item"
-				:class="isSelected(i) ? 'tip-selected' : ''" @mouseover="selectedItem = i">
-				<span class="tip-text">{{ item }}</span>
+	<view>
+		<view class="muli-tags" style="position: relative;">
+			<!-- span标签将一部分内容独立出来，从而对独立出来的内容设置单独的样式 -->
+			<span style="position: relative;" ref="tag" class="tag" v-for="(tag, index) in tags"
+				:key="`${index}-${tag}`" :data-tag-index="index">
+				<!-- <uni-tag type="primary" :text="tag" /> -->
+				<!-- <view class="label"><text>{{tag}}</text></view> -->
+				<view style="position: relative;" class="label">{{tag}}</view>
+				<!-- style="position: absolute;bottom: 0; right: 0;padding: 10px;" -->
+				<view style="position: relative;width:20px; height: 15px; padding-top: 20%;">
+					<view class="close" style="left:1px;position:absolute;z-index: 1;margin-right: 1px;top:50%"></view>
+					<button
+						style="left:1px;top:15%;bottom:15%;position:absolute;z-index: 10;padding-right:10%;: 80%;margin-bottom: 20%;border: 0;opacity:0;margin-right: 1px;"
+						@click="delTag(tag)">
+					</button>
+				</view>
+			</span>
+			<input ref="input" v-model="current" :placeholder="placeholder" type="text"
+				class="uni-easyinput__content-input" :placeholderStyle="placeholderStyle" :style="inputStyle"
+				placeholder-class="uni-easyinput__placeholder-class" @keyup.enter="add" @blur="add" @click.stop
+				@keydown.up="selectItem($event, 'before')" @keydown.down="selectItem($event, 'after')"></input>
+		</view>
+		<!-- TODO: 给这块加上css -->
+		<!-- @mouseleave  @mouseenter 是h5上的方法，在小程序上对应 touch -->
+		<view @mouseleave="selectedItem = null">
+			<view v-for="(item, i) in relativeTagOpts" :key="i" class="tip-item" @mouseenter="selectedItem = i"
+				@click="add">
+				<span class="">{{ item }}</span>
 				<span v-if="isSelected(i)" class="enter">回车选中</span>
-			</div>
-		</div>
-	</div>
+			</view>
+		</view>
+
+	</view>
 </template>
 
-
 <script>
+	import {
+		FormItem
+	} from "element-ui";
+	import {
+		nextTick
+	} from "vue";
+
+	function obj2strStyle(obj) {
+		let style = '';
+		for (let key in obj) {
+			const val = obj[key];
+			style += `${key}:${val};`;
+		}
+		return style;
+	}
+
 	export default {
-		name: "multags-input",
+		name: 'multags-input',
 		props: {
+			orignRelativeOpts: {
+				type: Array,
+				default: () => [],
+			},
 			value: {
 				type: Array,
 				require: true,
 				default: () => [],
 			},
+			/* 直接修改父组件传过来的relativeOpts值就会报警告 [Vue warn]: Avoid mutating a prop directly 
+			不要直接修改从父组件传过来的 props 数据，在data函数中重新定义一个变量，将props数据数据赋值在data变量上，后面修改data变量即可*/
 			relativeOpts: {
 				type: Array,
 				default: () => ['110', '114', '119', '120'],
 			},
+			placeholderStyle: String,
+			placeholder: {
+				type: String,
+				default: ' '
+			}
 		},
 		data() {
 			return {
+				// focused: false,
+				relativeOpts_a: this.relativeOpts,
+				users: [],
+				// relativeOpts_a,
 				current: '',
 				selectedItem: null,
-				tags: []
+				tags: [1, 2, 3, 4]
 			};
 		},
 		watch: {
@@ -47,135 +93,88 @@
 				handler() {
 					this.tags = this.value.slice();
 				}
-			}
+			},
+			// relativeOpts(val, valOld) {
+			// 	//如果值发生了变化
+			// 	// relativeOpts_a =
+			// 	console.log("####relativeOpts##val##: ", JSON.stringify(val))
+			// 	var newRelativeOpts = new Array();
+			// 	for (var i = 0; i < val.length; i++) {
+			// 		console.log(val[i].username)
+			// 		newRelativeOpts[i] = val[i].username
+			// 	}
+			// 	this.relativeOpts_a = newRelativeOpts
+			// 	console.log("####relativeOpts_a####: ", JSON.stringify(this.relativeOpts))
+			// }
 		},
 		computed: {
 			relativeTagOpts() {
 				const curInputVal = this.current.trim();
-				if (!curInputVal) return [];
-				return this.relativeOpts.filter(opt => opt.includes(curInputVal));
-			},
-		},
-		methods: {
-			focus() {
-				this.$nextTick(() => {
-					this.$refs.input.focus();
-				});
-			},
-			handleClick(e) {
-				e.preventDefault();
-				const rs = this.calcLatestTag(e);
-				const ele = rs && rs.ele;
-				if (ele) { // 找到了就移动输入框，没有就聚焦即可
-					const input = this.$refs.input;
-					if (rs.isRight) { // 将输入框移到标签右边
-						const nextEle = ele.nextSibling;
-						nextEle.before(input);
-					} else { // 将输入框移到标签左边
-						ele.before(input);
-					}
-				}
-				this.focus();
-			},
-			calcLatestTag(e) {
-				if (this.tags.length <= 1) return;
-				if (['INPUT', 'SPAN', 'I'].includes(e.target.tagName)) return;
-				const {
-					clientX,
-					clientY
-				} = e;
-				const tagArr = this.$refs.tag;
-				const inlineTagArr = []; // 把同一行的标签的放进来
-				let ele;
-				let isRight = true; // 如果找到，就把输入框移到这个标签的右边
-				tagArr.forEach(tag => {
-					const {
-						top,
-						left,
-						height
-					} = tag.getBoundingClientRect();
-					if (top <= clientY && top + height >= clientY) {
-						// 如果在同一行，如果超出高度了可以提前退出循环，这里就简单写
-						inlineTagArr.push(tag);
-						if (left <= clientX) ele = tag; // 找到点击事件左手边最近的一个标签
-					}
-				});
-				if (!ele) {
-					// 左手边没有找到最近的一个标签，说明点击的是最左边的空白处，于是我们尝试从 inlineTagArr 找到离点击事件左右手边最近的一个标签
-					if (inlineTagArr.length) {
-						ele = inlineTagArr[0]; // 其实可以不用遍历，因为一定是同一行的第一个元素
-						isRight = false; // 如果找到，就把输入框移到这个标签的左边
-					}
-				}
-				return {
-					isRight,
-					ele,
-				};
-			},
-			add() {
-				const trueVal = this.relativeTagOpts[this.selectedItem] || this.current;
-				if (!trueVal) return;
+				console.log("Current: ", this.current)
 
-				// 必须得先清空值，否则会触发失焦逻辑，造成其他错误
+				if (!curInputVal) return [];
+				//当候选列表大于4的时候说明不是默认列表， 而是从用户表中读取的数据； 对relativeOpts的值进行修改, 筛选为只剩用户名的列表
+				if (this.users.length == 0) {
+					for (var i = 0; i < this.relativeOpts_a.length; i++) {
+						this.users[i] = this.relativeOpts_a[i].username
+					}
+					console.log("#### usernames: ####: ", JSON.stringify(this.users))
+				}
+
+				const res = this.users.filter(opt => opt.includes(curInputVal));
+				return res;
+			},
+
+			// input右侧样式
+			inputStyle() {
+				const paddingRight =
+					this.type === 'password' || this.clearable || this.prefixIcon ?
+					'' :
+					'10px';
+				return obj2strStyle({
+					'padding-right': paddingRight,
+					'padding-left': this.prefixIcon ? '' : '10px'
+				});
+			}
+		},
+
+		methods: {
+			// getCanditorList() {
+			// 	//当候选列表大于4的时候说明不是默认列表， 而是从用户表中读取的数据； 对relativeOpts的值进行修改, 筛选为只剩用户名的列表
+
+			// 	return newRelativeOpts
+			// },
+			delTag(tag) {
+				console.log("DEL Tags");
+				// 当文本框内没有值才删除
+				if (this.current.length || !this.tags.length) return;
+				this.tags = this.tags.filter(function(item) {
+					return item != tag;
+				})
+				this.emitParent();
+			},
+			mouseenter() {
+				console.log("mouseenter")
+			},
+			focus() {
+				console.log("this.refs: ", this.$refs.input);
+				this.$refs.input.focus = true;
+			},
+
+			add() {
+				const v = this.relativeTagOpts[this.selectedItem] || this.current;
 				this.selectedItem = null;
 				this.current = '';
-
-				const input = this.$refs.input;
-				const preTag = input.previousElementSibling;
-				const tagIndex = preTag ? +preTag.dataset.tagIndex : -1;
-
-				if (preTag && tagIndex >= this.tags.length - 1) { // 如果 input 在最后面
-					this.tags.push(trueVal);
-				} else {
-					this.tags.splice(tagIndex + 1, 0, trueVal); // 如果 input 在标签之间
-					this.$nextTick(() => { // 添加完之后 tag 会在后面，所以需要将 input 和当前这个添加的这个 tag 交换位置
-						this.moveRight();
-					});
-				}
+				if (!v) return;
+				this.$nextTick(() => {
+					this.tags.push(v);
+				})
 
 				this.emitParent();
 				this.focus();
+
 			},
-			del() {
-				// 当文本框内没有值才删除
-				if (this.current.length || !this.tags.length) return;
-				const input = this.$refs.input;
-				const preTag = input.previousElementSibling;
-				if (preTag) {
-					const tagIndex = +preTag.dataset.tagIndex;
-					if (tagIndex >= this.tags.length - 1) { // 从末尾删除
-						this.tags.pop();
-					} else {
-						this.tags.splice(tagIndex, 1);
-						this.$nextTick(() => { // 如果从中间删除，input 的位置在删完之后需要左移一下
-							this.moveLeft();
-						});
-					}
-					this.emitParent();
-				}
-			},
-			preToMoveLeft() {
-				if (this.current.length) return;
-				this.moveLeft();
-			},
-			moveLeft() {
-				const input = this.$refs.input;
-				const preTag = input.previousElementSibling;
-				if (!preTag) return;
-				preTag.before(input);
-				this.focus();
-			},
-			moveRight() {
-				const input = this.$refs.input;
-				const nextTag = input.nextElementSibling;
-				if (!nextTag) return;
-				input.before(nextTag);
-				this.focus();
-			},
-			preToMoveRight() {
-				if (this.current.length) return;
-				this.moveRight();
-			},
+
 			// 下面几个是下拉相关方法
 			selectItem(e, method) {
 				e.preventDefault();
@@ -199,35 +198,144 @@
 				this.$emit('input', this.tags);
 			},
 		},
-	}
+	};
 </script>
 
 <style lang="scss" scoped>
+	.uni-stat__select {
+		display: flex;
+		align-items: center;
+		// padding: 15px;
+		cursor: pointer;
+		width: 100%;
+		flex: 1;
+		box-sizing: border-box;
+	}
+
+	.text {
+		font-size: 12px;
+		color: #666;
+		margin-top: 5px;
+	}
+
+	.uni-px-5 {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+	.uni-pb-5 {
+		padding-bottom: 10px;
+	}
+
+
+	.close {
+		display: inline-block;
+		width: 12px;
+		height: 2px;
+		background: lightgray;
+		transform: rotate(45deg);
+	}
+
+	.close::after {
+		content: '';
+		display: block;
+		width: 12px;
+		height: 2px;
+		background: lightgray;
+		transform: rotate(-90deg);
+	}
+
+
+	.uni-easyinput__placeholder-class {
+		// color: #999;
+		color: #999;
+		font-size: 12px;
+		// margin-left: 20rpx;
+		// font-weight: 200;
+	}
+
+	.uni-easyinput__content-input {
+		/* #ifndef APP-NVUE */
+		width: auto;
+		/* #endif */
+		position: relative;
+		overflow: hidden;
+		flex: 1;
+		line-height: 1;
+		font-size: 14px;
+		height: 35px;
+		// min-height: 36px;
+
+		/*ifdef H5*/
+		& ::-ms-reveal {
+			display: none;
+		}
+
+		& ::-ms-clear {
+			display: none;
+		}
+
+		& ::-o-clear {
+			display: none;
+		}
+
+		/*endif*/
+	}
+
 	.muli-tags {
 		display: flex;
 		flex-wrap: wrap;
+		/* 多出来的元素换行显示，并且仍是按照标签1 标签2...的时间先后顺序显示 */
 		align-content: flex-start;
 		position: relative;
-		min-height: 100px;
+		min-height: 22px;
+		// min-height: 32px;
+		min-width: 50px;
 		border: 1px solid #ccc;
 	}
 
 	.tag {
 		display: flex;
 		align-items: center;
-		margin: 5px 8px;
+		margin: 5px 3px;
 		max-width: calc(100% - 16px);
-		height: 32px;
-		background: #f8f9fa;
+		height: 22px;
+		//标签背景颜色
+		// background: #f8f9fa;
+		// background: skyblue;
 		border: 1px solid #dadfe3;
+		// border: 1px solid red;
 		border-radius: 4px;
 
 		.label {
 			font-style: normal;
+			/* 字体 四条边的内边距区域（两个值对应上下和左右）*/
 			padding: 0 6px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
+			// background-color: #666;
+		}
+
+		.delTagBtn {
+			font-style: normal;
+			// right: 1px; 
+			padding: 0 0 0 0;
+			// overflow: hidden;
+			// text-overflow: ellipsis;
+			// white-space: nowrap;
+			border-width: 0;
+			// background: #f8f9fa;
+			// background-color: gold;
+			//按钮x的高度;x的大小
+			height: 30px;
+			// margin: 5 0 0 5;
+			// text-align: match-parent;
+			font-size: 15px;
+			bottom: 10%;
+			right: 5%;
+			// align-items: flex-end;
+			// margin: 1px 1px 1px 1px;
 		}
 	}
 
@@ -242,12 +350,23 @@
 		border: none;
 	}
 
-	.tip {
+	.tip2 {
 		position: absolute;
 		top: 102%;
 		left: 0;
 		right: 0;
 		background: white;
+		box-shadow: 0px 0px 10px rgba(29, 29, 46, 0.02), 0px 6px 10px rgba(29, 29, 46, 0.04);
+		border-radius: 4px;
+	}
+
+	.tip {
+		position: absolute;
+		top: 102%;
+		left: 0;
+		right: 0;
+		background: skyblue;
+		// background: white;
 		box-shadow: 0px 0px 10px rgba(29, 29, 46, 0.02), 0px 6px 10px rgba(29, 29, 46, 0.04);
 		border-radius: 4px;
 
@@ -256,17 +375,19 @@
 			align-items: center;
 			justify-content: space-between;
 			padding: 0 12px;
+			margin: 10px 0 10px 0;
 			height: 34px;
 			cursor: pointer;
 
 			&.tip-selected {
-				background: #edf2ff;
+				// background: #edf2ff;
+				background: cadetblue;
 			}
 		}
 
 		.enter {
 			font-size: 12px;
-			color: #c6c6cc;
+			color: skyblue;
 		}
 
 		.tip-text {

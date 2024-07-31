@@ -75,7 +75,7 @@
 			<uni-dateformat return-type="timestamp" v-model="formData.create_date"></uni-dateformat>
 
 			<view class="uni-button-group">
-				<button type="primary" class="uni-button" @click="submit">提交</button>
+				<button type="primary" disabled="{func() ? true: false}" class="uni-button" @click="submit">提交</button>
 			</view>
 		</uni-forms>
 	</view>
@@ -165,7 +165,7 @@
 					value: 1005
 				}],
 
-
+				submitPermission: "110002",
 				formData,
 				formOptions: {},
 				rules: {
@@ -193,6 +193,11 @@
 					uni.hideLoading()
 				})
 			},
+			func() {
+				// 用户的permission是否包含submitPermission
+
+			},
+
 
 			//提交表单
 			submitForm(value) {

@@ -151,7 +151,7 @@
 									</view>
 								</uni-td>
 							</uni-tr>
-
+							<!-- 新增阶段 -->
 							<uni-tr>
 								<button class="uni-button" @click="navigateTo('../../admin-stages/add')">新增阶段</button>
 							</uni-tr>
