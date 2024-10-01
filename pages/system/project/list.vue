@@ -31,7 +31,6 @@
 			<unicloud-db ref="udb" collection="admin-projects,admin-stages" :where="where" page-data="replace"
 				:orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
 				v-slot:default="{data,pagination,loading,error,options}">
-
 				<view class="uni-side-screen" style="display: flex; width: 100%;height: 100%;">
 					<!-- 项目左侧导航栏 -->
 					<view
@@ -45,7 +44,7 @@
 					</view>
 					<!-- 项目右侧内容区 -->
 					<view
-						style="align-self: flex-end; min-width: 15%; height: 100%; text-align: left; border: 2px;border-color: antiquewhite;">
+						style="align-self: flex-end; min-width: 25%; height: 100%; text-align: left; border: 12px;border-color: black;">
 						<!-- 项目基础信息 上部-->
 						<view class="project_base"
 							style="display:inline-block; width: 100%; min-height: 100px; padding-bottom: 30px;">
@@ -133,8 +132,9 @@
 								<uni-th align="center" filter-type="search">阶段成员</uni-th>
 								<uni-th align="center" filter-type="timestamp">创建时间</uni-th>
 								<uni-th align="center" :width="buttonThWidth">操作</uni-th>
+								<uni-th align="center" :width="0"></uni-th>
 							</uni-tr>
-							<uni-tr v-for="(item,index) in stages" :key="index">
+							<uni-tr v-for="(item,index) in stages" :key="index" style="display: table-row;">
 								<uni-td align="center">{{item.stage_id}}</uni-td>
 								<uni-td align="center">{{item.name}}</uni-td>
 								<uni-td align="left">{{item.state}}</uni-td>
@@ -146,11 +146,54 @@
 										<!-- 阶段的修改和删除 弹窗表单形式 -->
 										<button @click="editRow(item)" class="uni-button" size="mini"
 											type="primary">{{$t('common.button.edit')}}</button>
+										<!-- delTableOne -->
 										<button @click="confirmDelete(item._id)" class="uni-button" size="mini"
 											type="warn">{{$t('common.button.delete')}}</button>
+										<!-- <button @click="editDetail" class="uni-button" size="mini"
+											type="default">详情</button> -->
+										<!-- <uni-collapse>
+											<uni-collapse-item title="折叠内容">
+												<text>折叠内容</text>
+												<uni-table>
+													<uni-tr v-show="true" style="display: table-row;">
+														<uni-td align="center">工作项id</uni-td>
+														<uni-td align="center">工作名称</uni-td>
+														<uni-td align="left">所属用户id</uni-td>
+														<uni-td align="center">对应阶段id</uni-td>
+														<uni-td align="center">对应的项目id</uni-td>
+														<uni-td align="center">当前工时成本</uni-td>
+														<uni-td align="center" :width="stateThWidth">状态</uni-td>
+														<uni-th align="center" :width="buttonThWidth">操作</uni-th>
+													</uni-tr>
+												</uni-table>
+											</uni-collapse-item>
+										</uni-collapse> -->
 									</view>
 								</uni-td>
+								<uni-td>
+									<uni-collapse>
+										<uni-collapse-item title="">
+											<uni-table>
+												<uni-tr v-show="true" style="display: table-row;">
+													<uni-td align="center">工作项id</uni-td>
+													<uni-td align="center">工作名称</uni-td>
+													<uni-td align="left">所属用户id</uni-td>
+													<uni-td align="center">对应阶段id</uni-td>
+													<uni-td align="center">对应的项目id</uni-td>
+													<uni-td align="center">当前工时成本</uni-td>
+													<!-- <uni-td align="center" :width="stateThWidth">状态</uni-td>
+													<uni-th align="center" :width="50">操作</uni-th> -->
+												</uni-tr>
+											</uni-table>
+										</uni-collapse-item>
+									</uni-collapse>
+								</uni-td>
+
+								<!-- 工作项内容  -->
+								<!-- 	<uni-tr v-show="true">								
+								</uni-tr> -->
 							</uni-tr>
+
 							<!-- 新增阶段 -->
 							<uni-tr>
 								<button class="uni-button" @click="navigateTo('../../admin-stages/add')">新增阶段</button>
@@ -158,15 +201,11 @@
 
 						</uni-table>
 
-
 						<!--弹框组件开始-----------------------start-->
-						<uni-popup ref="editDialog" type="dialog">
+						<uni-popup ref="editDialog" type="center" background-color="white"
+							borderRadius="10px 10px 10px 10px">
 							<edit-stage :test-info="testInfo" :itemInfo="stageItem">编辑阶段组件</edit-stage>
 						</uni-popup>
-						<!-- <dialog-component v-if="showDialog" ref="dialogComponent" :dialog-title="dialogTitle"
-							:item-info="stageItem" @closeDialog="closeDialog()"></dialog-component> -->
-						<!--弹框组件开始-----------------------end-->
-
 						<!-- 底部 -->
 						<view class="uni-pagination-box">
 							<uni-pagination show-icon show-page-size :page-size="pagination.size"
@@ -186,7 +225,6 @@
 
 
 <script>
-	// import DialogComponent from "../../admin-stages/edit.vue";
 	import {
 		enumConverter,
 		filterToWhere
@@ -199,6 +237,7 @@
 	// 表查询配置
 	const dbOrderBy = 'create_date' // 排序字段
 	const dbSearchFields = [] // 模糊搜索字段，支持模糊搜索的字段列表
+
 	// 分页配置
 	const pageSize = 20
 	const pageCurrent = 1
@@ -209,16 +248,10 @@
 	}
 
 	export default {
-		// name: "DialogDemo",
-		// components: {
-		// 	DialogComponent
-		// },
 		data() {
 			return {
-				collectionList: [db.collection('admin-projects').field(
-						'project_id,name,description,create_date,cost, state, stages, total_cost, owner_id, members')
-					.getTemp(), db.collection('admin-stages').field('_id,stage_id, name, owner').getTemp()
-				],
+				showItems: 'false',
+				collectionList: [db.collection('admin-stages').field('_id,stage_id, name, owner').getTemp()],
 				query: '',
 				where: '',
 				orderby: dbOrderBy,
@@ -269,14 +302,13 @@
 					"end_time": null,
 					"create_time": null
 				},
-				// dialogTitle: "添加阶段信息",
-				// showDialog: false,
 				testInfo: "测试通信",
 
 				exportExcelData: [],
 				addAppidLoading: true,
 				descriptionThWidth: 380,
-				buttonThWidth: 200
+				buttonThWidth: 300,
+				stateThWidth: 50
 			}
 		},
 		onLoad() {
@@ -284,6 +316,7 @@
 		},
 		onReady() {
 			this.$refs.udb.loadData()
+			// console.log(this.stages)
 		},
 		computed: {
 			...mapState('app', ['appName', 'appid'])
@@ -302,10 +335,15 @@
 			// 	}
 			// 	this.showDialog = false;
 			// },
+
+			editDetail() {
+				this.showItems = true;
+			},
+
 			editRow(row) {
-				console.log("#####################editDialog#######row##########################")
+				console.log("list.vue#####################editDialog#######row##########################")
 				this.stageItem = row;
-				console.log("stageItem:", JSON.stringify(this.stageItem))
+				console.log("list.vue######stageItem:", JSON.stringify(this.stageItem))
 				this.$refs.editDialog.open()
 				// this.dialogTitle = "编辑阶段信息";
 				// this.showDialog = true;
@@ -331,7 +369,7 @@
 				}
 				// console.log("list.vue###########item: ", JSON.stringify(item))
 				// console.log("list.vue###########item.satges: ", JSON.stringify(item.satges))
-				console.log("list.vue###########item.stages: ", JSON.stringify(item.stages))
+				// console.log("list.vue###########item.stages: ", JSON.stringify(item.stages))
 				// console.log("##################################################################")
 				this.project = {
 					name: item.name,
@@ -433,15 +471,59 @@
 			selectionChange(e) {
 				this.selectedIndexs = e.detail.index
 			},
+			// delTableOne() {
+			// 	const ids = this.selectedItems()
+			// 	console.log("list.vue #### delTableOne ###id ", ids)
+			// 	var options = {
+			// 		action: "deleteDaYinOrder",
+			// 		confirmTitle: '提示',
+			// 		confirmContent: '是否删除该数据',
+			// 	};
+			// 	this.$refs.udb.remove(ids, options);
+			// },
 			confirmDelete(id) {
-				console.warn(
-					"删除应用，只能删除应用表 opendb-app-list 中的应用数据记录，不能删除与应用关联的其他数据，例如：使用升级中心 uni-upgrade-center 等插件产生的数据（应用版本数据等）"
-				)
-				this.$refs.udb.remove(id, {
-					confirmContent: '是否删除该应用',
-					success: (res) => {
-						this.$refs.table.clearSelection()
-					}
+				console.log("list.vue #### confirmDelete ###删除数据的id ", id)
+				// console.warn(
+				// 	"删除此条阶段信息"
+				// )
+				// this.$refs.udb.remove(id, {
+				// 	confirmContent: '是否删除该阶段',
+				// 	success: (res) => { // 删除成功后的回调
+				// 		console.log("list.vue #### confirmDelete ##删除成功#res ", res)
+				// 		console.log("list.vue #### confirmDelete ##删除成功#this.$refs.table ", this.$refs.table)
+				// 		const {
+				// 			code,
+				// 			message
+				// 		} = res
+				// 		console.log("list.vue #### confirmDelete ##删除成功#code: ", code, " message: ", message)
+				// 		// this.$refs.table.clearSelection()
+				// 		// 清空表格的选中状态 
+				// 		// this.$refs.table.clearSelection()
+				// 	},
+				// 	fail: (err) => { // 删除失败后的回调
+				// 		const {
+				// 			message
+				// 		} = err
+				// 		console.log("list.vue #### confirmDelete ###删除失败 err ", err)
+				// 	},
+				// 	complete: () => { // 完成后的回调
+				// 		console.log("list.vue #### confirmDelete ###删除完成 ")
+				// 	}
+				// })
+
+				//传统删除记录方式，通过doc.id
+				db.collection("admin-stages").doc(id).remove().then((res) => {
+					uni.showToast({
+						icon: 'none',
+						title: '删除成功'
+					})
+
+					setTimeout(() => uni.navigateBack(), 500)
+				}).catch((err) => {
+					uni.showModal({
+						content: err.message || '请求服务失败',
+						showCancel: false
+					})
 				})
 			},
 			sortChange(e, name) {

@@ -391,8 +391,17 @@
 				this.selectedIndexs = e.detail.index
 			},
 			confirmDelete(id) {
+				console.log("list.vue #### confirmDelete ###id ", id)
 				this.$refs.udb.remove(id, {
 					success: (res) => {
+
+						console.log("list.vue #### confirmDelete ###res ", res)
+						console.log("list.vue #### confirmDelete ##删除成功#this.$refs.table ", this.$refs.table)
+						const {
+							code,
+							message
+						} = res
+						console.log("list.vue #### confirmDelete ##删除成功#code: ", code, " message: ", message)
 						this.$refs.table.clearSelection()
 					}
 				})

@@ -106,6 +106,7 @@
 			// this.$nextTick(() => {				
 			// 	this.$refs.form.setRules(this.rules)
 			// })
+			console.log("add.vue ######onReady#####")
 			this.$refs.form.setRules(this.rules)
 			// console.log("users:", this.getUsers())
 		},
@@ -117,25 +118,16 @@
 			// this.$refs.form.setRules(this.rules)
 		},
 		methods: {
-			// getUsers() {
-			// 	var userData = JSON.stringify(this.$refs.udb.data)
-			// 	let pp = JSON.parse(userData)
-			// 	console.log("userData: ", userData)
-			// 	var users = []
-			// 	var i = 0
-			// 	// for (let u of userData) {
-			// 	// 	users[i++] = Object(u)[1]
-			// 	// }
-			// 	// return users
-			// },
 			/**
 			 * 验证表单并提交
 			 */
 			submit() {
+				console.log("add.vue ######submit#####")
 				uni.showLoading({
 					mask: true
 				})
 				this.$refs.form.validate().then((res) => {
+					console.log("add.vue ######submit#####res", res)
 					return this.submitForm(res)
 				}).catch(() => {}).finally(() => {
 					uni.hideLoading()
@@ -146,6 +138,7 @@
 			 * 提交表单
 			 */
 			submitForm(value) {
+				console.log("add.vue ######submitForm#####", value)
 				// 使用 clientDB 提交数据
 				return db.collection(dbCollectionName).add(value).then((res) => {
 					uni.showToast({

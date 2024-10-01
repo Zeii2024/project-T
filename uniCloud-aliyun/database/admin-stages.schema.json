@@ -5,10 +5,20 @@
 		"name"
 	],
 	"permission": {
-		"read": "'READ_OPENDB_APP_LIST' in auth.permission",
-		"create": "'CREATE_OPENDB_APP_LIST' in auth.permission",
-		"update": "'UPDATE_OPENDB_APP_LIST' in auth.permission",
-		"delete": "'DELETE_OPENDB_APP_LIST' in auth.permission"
+		"read": true,
+		"create": true,
+		"update": true,
+		"delete": true
+
+		// "read": "'READ_OPENDB_APP_LIST' in auth.permission",
+		// "create": "'CREATE_OPENDB_APP_LIST' in auth.permission",
+		// "update": "'UPDATE_OPENDB_APP_LIST' in auth.permission",
+		// "delete": "'DELETE_OPENDB_APP_LIST' in auth.permission"
+
+		// "read": true,
+		// "create": "'CREATE_UNI_ID_USERS' in auth.permission",
+		// "update": "doc._id == auth.uid || 'UPDATE_UNI_ID_USERS' in auth.permission",
+		// "delete": "'DELETE_UNI_ID_USERS' in auth.permission"
 	},
 	"properties": {
 		"_id": {

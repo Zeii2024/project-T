@@ -165,6 +165,7 @@
 			 * 触发表单提交
 			 */
 			submitForm(form) {
+				console.log("edit_admin: ", form)
 				this.$refs.form.submit();
 			},
 
@@ -173,10 +174,12 @@
 			 * @param {Object} event 回调参数 Function(callback:{value,errors})
 			 */
 			submit(event) {
+				console.log("edit_admin####submit: ", event)
 				const {
 					value,
 					errors
 				} = event.detail
+				console.log("edit_admin####submit####value: ", value)
 				// 表单校验失败页面会提示报错 ，要停止表单提交逻辑
 				if (errors) {
 					return
@@ -226,7 +229,7 @@
 				uni.showLoading({
 					mask: true
 				})
-				db.collection(dbCollectionName)
+				db.collection(dbCollectionName) /* uni-id-users */
 					.doc(id)
 					.field(
 						'username,nickname,role,dcloud_appid as authorizedApp,tags,mobile,email,status,permission,position,employee_number,work_cost'
@@ -269,6 +272,7 @@
 						uni.hideLoading()
 					})
 			},
+
 			loadroles() {
 				db.collection('uni-id-roles').limit(500).get().then(res => {
 					const roleIds = []
